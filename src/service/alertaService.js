@@ -14,13 +14,24 @@ export const crearAlerta = async (info) => {
   };
   
 export const getAlertas = async () => {
-    const { data, error } = await supabase.from('alertas').select('*');
-    const decoradas = decorarAlertas(data || []);
-    return { data: decoradas, error };
-  };
-  
+  const { data, error } = await supabase
+    .from('alertas')
+    .select(`
+      *,
+      estaciones (
+        idestacion,
+        nombre,
+        ubicacion,
+        Zona
+      )
+    `);
 
-  export const getAlertaById = async (idAlerta) => {
+  const decoradas = decorarAlertas(data || []);
+  return { data: decoradas, error };
+};
+
+
+export const getAlertaById = async (idAlerta) => {
     const { data, error } = await supabase
       .from('alertas')
       .select('*')
@@ -32,7 +43,7 @@ export const getAlertas = async () => {
   };
   
 
-  export const filtrarAlertas = async (tipos = []) => {
+export const filtrarAlertas = async (tipos = []) => {
     const { data, error } = await supabase
       .from('alertas')
       .select('*')
